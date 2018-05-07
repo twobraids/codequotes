@@ -74,6 +74,16 @@ class WoTThing(Thing, RequiredConfig):
             kls.property_fetching_coroutines.append(a_property_fetching_coroutine)
 ```
 
+```python
+            def get_value_fn(thing_instance):
+                return thing_instance.properties[name].value.get()
+    
+            def set_value_fn(thing_instance, new_value):
+                thing_instance.properties[name].value.notify_of_external_update(new_value)
+    
+            return property(get_value_fn, set_value_fn)
+```
+
 
 
 
