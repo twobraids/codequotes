@@ -1,6 +1,6 @@
 this is an experiment in both git and python
 
-``` python
+```python
 #!/usr/bin/env python3
 
 """This Web Thing implements a virtual weather station using data from Weather Underground.
@@ -166,7 +166,7 @@ if __name__ == '__main__':
 ```
 
 
-``` python
+```python
 from webthing import (
     Thing,
     Property,
