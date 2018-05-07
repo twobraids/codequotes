@@ -84,6 +84,27 @@ class WoTThing(Thing, RequiredConfig):
             return property(get_value_fn, set_value_fn)
 ```
 
+```python
+        current_observation = self.weather_data['current_observation']
+        self.temperature = current_observation['temp_f']
+        self.barometric_pressure = current_observation['pressure_in']
+        self.wind_speed = current_observation['wind_mph']
+```
+
+```python
+        current_observation = self.weather_data['current_observation']
+        self.properties['temperature'].value.notify_of_external_update(
+            current_observation['temp_f']
+        )
+        self.properties['barometric_pressure'].value.notify_of_external_update(
+            current_observation['pressure_in']
+        )
+        self.properties['wind_speed'].value.notify_of_external_update(
+            current_observation['wind_mph']
+        )
+```
+
+
 
 
 
