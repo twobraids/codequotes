@@ -1,6 +1,13 @@
 this is an experiment in both git and python
 
 ```python
+# using the webthing API directly:
+my_weather_station.get_thing().properties['temperature'].value.notify_of_external_update(32)
+# the same thing using the pywot API
+my_weather_station.temperature = 32
+```
+
+```python
 #!/usr/bin/env python3
 
 """This Web Thing implements a virtual weather station using data from Weather Underground.
