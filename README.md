@@ -1,10 +1,17 @@
 this is an experiment in both git and python
 
 ```python
-# using the webthing API directly:
-my_weather_station.get_thing().properties['temperature'].value.notify_of_external_update(32)
-# the same thing using the pywot API
-my_weather_station.temperature = 32
+light.add_property(
+    Property(
+        light,
+        'level',
+        Value(0.0, lambda l: print('New light level is', l)),
+        metadata={
+            'type': 'number',
+            'description': 'The level of light from 0-100',
+            'minimum': 0,
+            'maximum': 100,
+        }))
 ```
 
 ```python
