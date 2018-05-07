@@ -18,6 +18,22 @@ class ExampleDimmableLight(Thing):
 ```
 
 ```python
+class ExampleDimmableLight(WoTThing):
+    def __init__(self, config, lamp_hardware):
+        super(ExampleDimmableLight, self).__init__(
+            config, 'a lamp', 'dimmableLight', 'a Web connected lamp')
+        
+    level = WoTThing.wot_property(
+        name='level',
+        initial_value=0,
+        description="lamp brightness level",
+        value_forwarder=_set_hardware_level,
+        minimum=0,
+        maximum=100
+    )
+```
+
+```python
 #!/usr/bin/env python3
 
 """This Web Thing implements a virtual weather station using data from Weather Underground.
