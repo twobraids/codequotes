@@ -1,17 +1,20 @@
 this is an experiment in both git and python
 
 ```python
-light.add_property(
-    Property(
-        light,
-        'level',
-        Value(0.0, lambda l: print('New light level is', l)),
-        metadata={
-            'type': 'number',
-            'description': 'The level of light from 0-100',
-            'minimum': 0,
-            'maximum': 100,
-        }))
+class ExampleDimmableLight(Thing):
+    def __init__(self):
+        Thing.__init__('a lamp', 'dimmable light', 'a Web connected lamp')
+        self.add_property(
+            Property(
+                light,
+                'level',
+                Value(0.0, lambda l: print('New light level is', l)),
+                metadata={
+                    'type': 'number',
+                    'description': 'The level of light from 0-100',
+                    'minimum': 0,
+                    'maximum': 100,
+                }))
 ```
 
 ```python
