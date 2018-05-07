@@ -34,6 +34,31 @@ class ExampleDimmableLight(WoTThing):
 ```
 
 ```python
+class WoTThing(Thing, RequiredConfig):
+    @classmethod
+    def wot_property(
+        kls,
+        *,
+        name,
+        initial_value,
+        description,
+        value_source_fn=None,
+        value_forwarder=None,
+        **kwargs
+    ):
+        kls.wot_property_functions[name] = partial(
+            create_wot_property,
+            name=name,
+            initial_value=initial_value,
+            description=description,
+            value_source_fn=value_source_fn,
+            value_forwarder=value_forwarder,
+            **kwargs
+        )
+```
+
+
+```python
 #!/usr/bin/env python3
 
 """This Web Thing implements a virtual weather station using data from Weather Underground.
