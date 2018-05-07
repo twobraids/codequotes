@@ -57,6 +57,25 @@ class WoTThing(Thing, RequiredConfig):
         )
 ```
 
+```python
+        if value_source_fn is not None:
+            async def a_property_fetching_coroutine(thing_instance):
+                while True:
+                    try:
+                        await value_source_fn(thing_instance)
+                    except CancelledError:
+                        logging.debug('cancel detected')
+                        break
+                    except Exception as e:
+                        logging.error('loading data fails: %s', e)
+                    await sleep(thing_instance.config.seconds_between_polling)
+
+            a_property_fetching_coroutine.property_name = name
+            kls.property_fetching_coroutines.append(a_property_fetching_coroutine)
+```
+
+
+
 
 ```python
 #!/usr/bin/env python3
