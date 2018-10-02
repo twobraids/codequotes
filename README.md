@@ -1,17 +1,22 @@
 this is an experiment in both git and python
 
 ```python
-class BondedBulbsRule(Rule):
+class HeartBeat(TimeBasedTrigger):
+    def __init__(
+        self,
+        name,
+        period_str
+        # duration should be a integer in string form with an optional
+        #    H, h, M, m, S, s, D, d  as a suffix to indicate units - default S
+    ):
+        super(HeartBeat, self).__init__(name)
+        self.period = self.duration_str_to_seconds(period_str)
 
-    def register_triggers(self):
-        return (
-            self.Philips_HUE_01,
-            self.Philips_HUE_02,
-            self.Philips_HUE_03,
-            self.Philips_HUE_04,
-        )
+    async def trigger_dection_loop(self):
+        logging.debug('Starting heartbeat timer %s', self.period)
+        while True:
+            await asyncio.sleep(self.period)
+            logging.info('%s beats', self.name)
+            self._apply_rules()
 
-    def action(self, the_triggering_thing, the_changed_property_name, the_new_value):
-        for a_thing in self.participating_things.values():
-            setattr(a_thing, the_changed_property_name, the_new_value)
 ```
