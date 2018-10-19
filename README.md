@@ -38,7 +38,7 @@ class SunTrigger(TimeBasedTrigger):
 
     async def trigger_detection_loop(self):
         while True:
-            now = self.local_now().astimezone(self.location.tz)
+            now = self.now_in_timezone(self.location.tz)
             sun_schedule = self.get_sun_schedule(now)
             if sun_schedule[self.sun_event_name] + self.time_offset < now:
                 # this event is in the past, get tomorrow's event instead
