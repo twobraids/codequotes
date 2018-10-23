@@ -137,12 +137,11 @@ class EveningPorchLightRule(Rule):
         )
         return (self.sunset_trigger, self.ten_pm_trigger)
 
-    def action(self, the_changed_thing, *args):
-        if the_changed_thing is self.sunset_trigger:
+    def action(self, the_triggering_thing, *args):
+        if the_triggering_thing is self.sunset_trigger:
             self.Philips_HUE_01.on = True
         else:
             self.Philips_HUE_01.on = False
-
 
 
 class RahukaalamRule(Rule):
@@ -154,7 +153,7 @@ class RahukaalamRule(Rule):
             ("rahukaalam_start", "rahukaalam_end", ),
             (44.562951, -123.3535762),
             "US/Pacific",
-            70.0
+            70.0,
         )
         return (rahukaalam_trigger,)
 
@@ -166,23 +165,6 @@ class RahukaalamRule(Rule):
         else:
             logging.info('%s ends', self.name)
             self.Philips_HUE_02.on = False
-            
-            
-def main(config, rule_system):
-    evening_porch_rule = EveningPorchLightRule(
-        config,
-        rule_system,
-        'turn on front porch light ten minutes after sunset'
-    )
-    rule_system.add_rule(evening_porch_rule)
-
-    rahukaalam_warning_rule = RahukaalamRule(
-        config,
-        rule_system,
-        'warning light during Rahukaalam'
-    )
-    rule_system.add_rule(rahukaalam_warning_rule)
-
 
 
 
