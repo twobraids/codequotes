@@ -148,19 +148,18 @@ class EveningPorchLightRule(Rule):
 class RahukaalamRule(Rule):
 
     def register_triggers(self):
-        events_trigger = DailySolarEventsTrigger(
+        rahukaalam_trigger = DailySolarEventsTrigger(
             self.config,
             "rahukaalam_trigger",
             ("rahukaalam_start", "rahukaalam_end", ),
             (44.562951, -123.3535762),
             "US/Pacific",
-            70.0,
-            "-101m"
+            70.0
         )
-        return (events_trigger,)
+        return (rahukaalam_trigger,)
 
-    def action(self, the_changed_thing, the_changed_property, new_value):
-        if the_changed_property == "rahukaalam_start":
+    def action(self, the_triggering_thing, the_trigger, *args):
+        if the_trigger == "rahukaalam_start":
             logging.info('%s starts', self.name)
             self.Philips_HUE_02.on = True
             self.Philips_HUE_02.color = "#FF9900"
