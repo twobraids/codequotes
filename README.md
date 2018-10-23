@@ -144,6 +144,7 @@ class EveningPorchLightRule(Rule):
             self.Philips_HUE_01.on = False
 
 
+
 class RahukaalamRule(Rule):
 
     def register_triggers(self):
@@ -153,18 +154,21 @@ class RahukaalamRule(Rule):
             ("rahukaalam_start", "rahukaalam_end", ),
             (44.562951, -123.3535762),
             "US/Pacific",
-            70.0
+            70.0,
+            "-101m"
         )
         return (events_trigger,)
 
     def action(self, the_changed_thing, the_changed_property, new_value):
-        if new_value is True:
+        if the_changed_property == "rahukaalam_start":
+            logging.info('%s starts', self.name)
             self.Philips_HUE_02.on = True
             self.Philips_HUE_02.color = "#FF9900"
         else:
+            logging.info('%s ends', self.name)
             self.Philips_HUE_02.on = False
-
-
+            
+            
 def main(config, rule_system):
     evening_porch_rule = EveningPorchLightRule(
         config,
