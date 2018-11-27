@@ -2,14 +2,30 @@ this is an experiment in both git and python
 
 ```python
 
-url = 'http://gateway.local/things'
-headers = {
-    'Accept': 'application/json',
-    'Authorization': 'Bearer {}'.format(auth),
-}
+class ThingTalker:
+    def __init__(self, config):
+        self.command_queue = asyncio.Queue()
+        self.connect_str = '{}?jwt={}'.format(
+            web_socket_link_str,
+            auth_key
+        )
 
-async def get_all_things(self):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers) as resp:
-            all_things_meta = json.loads(await resp.text())
+    async def trigger_detection_loop(self):
+        while True:
+            async with websockets.connect(self.connect_str) as websocket:
+                await asyncio.gather(
+                    self.receive_websocket_messages(websocket),
+                    self.send_queued_messages(websocket)
+                )
+
+    async def receive_websocket_messages(self, websocket):
+        async for raw_message in websocket:
+            message = json.loads(raw_message)
+            self.act_on_message(message)
+
+    async def send_queued_messages(self, websocket):
+        while True:
+            message = await self.command_queue.get()
+            message_str = json.dumps(message)
+            await websocket.send(message_str)
 ```
