@@ -2,11 +2,22 @@ this is an experiment in both git and python
 
 ```python
 
-class RedLightRule(Rule):
-    def register_triggers(self):
-        self.command_button.subscribe_to_event('pressed')
-        return (self.command_button, )
+   {
+      ...
+      "href" : "/things/zb-001788010311382c",
+      "selectedCapability" : "Light",
+      "properties" : {
+         "on" : {
+            "href" : "/things/zb-001788010311382c/properties/on",
+            "type" : "boolean",
+            ...
+         }
+         "color" : { ... },
+      },
+      "type" : "onOffColorLight",
+      "name" : "hue_1",
+      "events" : {},
+      ...
+   },
 
-    def action(self, *args):
-            self.hue_3.on = not self.hue_3.on
 ```
