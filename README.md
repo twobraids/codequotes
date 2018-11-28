@@ -1,19 +1,18 @@
 this is an experiment in both git and python
 
 ```python
-
-{
-    "name": "hue_1",
-    "type": "onOffColorLight",
-    "href": "/things/zb-001788010311382c",
-    "links": [ ... ],
-    "properties": {
-       "on": { ... },
-       "color": { ... }
-    },
-    "events": { ... },
-    "actions": { ... },
-    ...
+...,
+"properties": {
+   "on": {
+      "type": "boolean",
+      "href": "/things/zb-00178801036c3b2d/properties/on",
+      ...
+   },
+   "color": {
+      "type": "string",
+      "href": "/things/zb-00178801036c3b2d/properties/color",
+      ...
+   }
 }, ...
 
 ```
