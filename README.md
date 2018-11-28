@@ -2,22 +2,18 @@ this is an experiment in both git and python
 
 ```python
 
-   {
-      ...
-      "href" : "/things/zb-001788010311382c",
-      "selectedCapability" : "Light",
-      "properties" : {
-         "on" : {
-            "href" : "/things/zb-001788010311382c/properties/on",
-            "type" : "boolean",
-            ...
-         }
-         "color" : { ... },
-      },
-      "type" : "onOffColorLight",
-      "name" : "hue_1",
-      "events" : {},
-      ...
-   },
+[
+   { "name": "hue_1", ... },
+   { "name": "hue_2", ... },
+   { "name": "hue_3", ... },
+   { "name": "hue_4", ... },
+   { "name": "hue_5", ... },
+   { "name": "hue_6", ... },
+   { "name": "advance_button", ... },
+   { "name": "command_button", ... },
+   { "name": "PresentationState", ... },
+   ...
+]
+
 
 ```
