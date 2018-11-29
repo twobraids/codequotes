@@ -1,8 +1,8 @@
 this is an experiment in both git and python
 
 ```python
-
-hue_3.on = True
-hue_3.color = "#00FF00"
+with hue_3.batch_communication() as h3:
+    h3.on = True
+    h3.color = "#0000FF"
 
 ```
