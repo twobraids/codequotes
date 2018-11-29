@@ -1,8 +1,14 @@
 this is an experiment in both git and python
 
 ```python
-with hue_3.batch_communication() as h3:
-    h3.on = True
-    h3.color = "#0000FF"
 
+class BlueLightRule(Rule):
+    def register_triggers(self):
+        self.command_button.subscribe_to_event('pressed')
+        return (self.command_button, )
+
+    def action(self, *args):
+        with self.hue_3.batch_communication() as hue_3:
+            hue_3.on = True
+            hue_3.color = "#0000ff"
 ```
