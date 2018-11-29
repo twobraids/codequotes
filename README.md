@@ -9,6 +9,7 @@ class BlueLightRule(Rule):
 
     def action(self, *args):
         with self.hue_3.batch_communication() as hue_3:
-            hue_3.on = True
-            hue_3.color = "#0000ff"
+            hue_3.on = not self.hue_3.on
+            if hue_3.on is True:
+                hue_3.color = "#0000ff"
 ```
