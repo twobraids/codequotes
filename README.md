@@ -2,36 +2,41 @@ this is an experiment in both git and python
 
 ```python
 
-class TimeOutLightRule(Rule):
+the_rainbow_of_colors = deque([
+    '#ff0000',
+    '#ffaa00',
+    '#aaff00',
+    '#00ff00',
+    '#0000ff',
+    '#aa00ff'
+])
+
+
+class RainbowRule(Rule):
+
+    def initial_state(self):
+        self.participating_bulbs = (
+            self.hue_1,
+            self.hue_2,
+            self.hue_3,
+            self.hue_4,
+            self.hue_5,
+            self.hue_6,
+        )
+
+        for a_bulb, initial_color in zip(self.participating_bulbs, the_rainbow_of_colors):
+            with a_bulb.batch_communication() as bulb_transaction:
+                bulb_transaction.on = True
+                bulb_transaction.color = initial_color
 
     def register_triggers(self):
-        self.timer = DelayTimer(self.config, "time_out time", "5s")
-        self.command_button.subscribe_to_event('pressed')
-        self.command_button.subscribe_to_event('longPressed')
-        self.command_button.subscribe_to_event('doublePressed')
-        return (self.command_button, self.timer, self.hue_4)
+        self.heartbeat = HeartBeat(self.config, 'the heart', "2s")
+        return (self.heartbeat, )
 
-    def action(self, the_triggering_thing, the_trigger_event, new_value):
-        if the_triggering_thing is self.command_button and the_trigger_event == 'pressed':
-            if self.hue_4.on:
-                self.timer.add_time()  # add five seconds
-            else:
-                self.hue_4.on = True
-
-        elif the_triggering_thing is self.command_button and the_trigger_event == 'longPressed':
-            self.hue_4.on = False
-
-        elif the_triggering_thing is self.command_button and the_trigger_event == 'doublePressed':
-            self.hue_4.on = not self.hue_4.on
-
-        elif the_triggering_thing is self.timer:
-            self.hue_4.on = False
-
-        elif the_triggering_thing is self.hue_4 and new_value is False:
-            self.timer.cancel()
-
-        elif the_triggering_thing is self.hue_4 and new_value is True:
-            self.timer.add_time()  # add five seconds
+    def action(self, *args):
+        the_rainbow_of_colors.rotate(1)
+        for a_bulb, new_color in zip(self.participating_bulbs, the_rainbow_of_colors):
+            a_bulb.color = new_color
 
 
 ```
