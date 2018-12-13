@@ -1,7 +1,9 @@
-I like the way that github highlights python code.  In my own blogs and presentations, 
-I want to highlight code in the same manner.  I use this repo to hold code quotes from my 
-blogs and presentations.  Each commit represents a single code quote.  It gives both
-history and a source for mining HTML for code quotes inserted into wikis, blogs and presentations.
+I like the way that github highlights python code. In my own blogs and presentations,
+I want to highlight code in the same manner. Each commit in this repo represents a single
+code quote. This repo gives both a linkable history and a source for mining HTML for code
+quotes inserted into wikis, blogs and presentations. I like the consistency and flexibility
+of github's CSS tagging in code quotes.
+
 
 ```python
 
