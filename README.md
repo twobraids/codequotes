@@ -15,7 +15,7 @@ automation:
     event: sunset
     offset: "-01:00:00"  
   action:
-    service: light.turn_on
+    service: porchlight.turn_on
 
 ```
 
