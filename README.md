@@ -13,7 +13,7 @@ automation:
   trigger:
     platform: sun
     event: sunset
-    offset: "-01:00:00"  
+    offset: "01:00:00"  
   action:
     service: porchlight.turn_on
 
