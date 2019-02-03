@@ -20,16 +20,29 @@ automation:
 ```
 
 ```python
-class EveningPorchLightRule(Rule):
-    def register_triggers(self):
-        self.sunset_trigger = SunsetTrigger(
-            lat_long=(44.562951, -123.3535762),
-            elevation=70.0,
-            time_offset="1h"
+class WeatherStation(WoTThing):
+    def __init__(self, config):
+        super(WeatherStation, self).__init__(
+            config,
+            config.name,
+            "thing",
+            "temperature at home")
         )
-        return self.sunset_trigger
 
-    def action(self, *args):
-        self.porch_light.on = True
+    async def get_weather_data(self):
+        async with aiohttp.ClientSession() as session:
+            async with async_timeout.timeout(self.config.seconds_for_timeout):
+                async with session.get(self.config.target_url) as response:
+                    self.weather_data = json.loads(await response.text())
+        current_observation = self.weather_data['current_observation']
+        self.temperature = current_observation['temp_f']
+                
+    temperature = WoTThing.wot_property(
+        name='temperature',
+        initial_value=0.0,
+        description='the temperature in ℉',
+        value_source_fn=get_weather_data,
+        units='℉'
+    )
 
 ```
