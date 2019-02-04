@@ -20,25 +20,13 @@ automation:
 ```
 
 ```python
-class WeatherStation(WoTThing):
-    def __init__(self, config):
-        super(WeatherStation, self).__init__(...)
-        
-    async def get_weather_data(self): ...
-        
-    temperature = WoTThing.wot_property(
-        name='temperature',
-        initial_value=0.0,
-        description='the temperature in ℉',
-        value_source_fn=get_weather_data,
-        units='℉'
+    weather_station = WeatherStation(config)
+
+    server = config.server.wot_server_class(
+        config,
+        [weather_station],
+        port=config.server.service_port
     )
-
-
-async def get_weather_data(self):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(self.config.target_url) as response:
-            weather_data = json.loads(await response.text())
-    self.temperature = weather_data['current_observation']['temp_f']
+    server.run()
                 
 ```
