@@ -22,26 +22,23 @@ automation:
 ```python
 class WeatherStation(WoTThing):
     def __init__(self, config):
-        super(WeatherStation, self).__init__(
-            config,
-            config.name,
-            "thing",
-            "temperature at home")
-        )
+        super(WeatherStation, self).__init__(...)
+        
+    async def get_weather_data(self): ...
+        
+    temperature = WoTThing.wot_property(
+        name='temperature',
+        initial_value=0.0,
+        description='the temperature in ℉',
+        value_source_fn=get_weather_data,
+        units='℉'
+    )
+
 
 async def get_weather_data(self):
     async with aiohttp.ClientSession() as session:
         async with session.get(self.config.target_url) as response:
-            self.weather_data = json.loads(await response.text())
-    current_observation = self.weather_data['current_observation']
-    self.temperature = current_observation['temp_f']
+            weather_data = json.loads(await response.text())
+    self.temperature = weather_data['current_observation']['temp_f']
                 
-temperature = WoTThing.wot_property(
-    name='temperature',
-    initial_value=0.0,
-    description='the temperature in ℉',
-    value_source_fn=get_weather_data,
-    units='℉'
-)
-
 ```
