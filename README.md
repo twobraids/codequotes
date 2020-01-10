@@ -20,13 +20,16 @@ automation:
 ```
 
 ```python
-    weather_station = WeatherStation(config)
+from __future__ import absolute_import
+    
+import numpy.fft
+from itertools import permutations 
 
-    server = config.server.wot_server_class(
-        config,
-        [weather_station],
-        port=config.server.service_port
-    )
-    server.run()
-                
+import sister_module_1
+from sister_module_2 import some_obscure_symbol    
+
+from . import sister_module_1
+from .sister_module_2 import some_obscure_symbol
+from .. import aunt_module_3 
+from ..uncle_package_4 import cousin_module_5
 ```
