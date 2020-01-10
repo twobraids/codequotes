@@ -27,22 +27,22 @@ automation:
 
 ```python
 
-import numpy.fft
-from itertools import permutations 
+    import numpy.fft
+    from itertools import permutations 
 
 ```
 
 ```python
-import sister_module_1
-from sister_module_2 import some_obscure_symbol    
+    import sister_module_1
+    from sister_module_2 import some_obscure_symbol    
 
 ```
 
 ```python
 
-from . import sister_module_1
-from .sister_module_2 import some_obscure_symbol
-from .. import aunt_module_3 
-from ..uncle_package_4 import cousin_module_5
+    from . import sister_module_1
+    from .sister_module_2 import some_obscure_symbol
+    from .. import aunt_module_3 
+    from ..uncle_package_4 import cousin_module_5
 
 ```
