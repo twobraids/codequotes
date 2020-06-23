@@ -50,29 +50,39 @@ print(args.accumulate(args.integers))
 
 ```bash
 
-$ ./x1.py 0 0 --help
-    usage: x1.py [-h] [--sum] [--admin.print_conf ADMIN.PRINT_CONF]
-                 [--admin.dump_conf ADMIN.DUMP_CONF] [--admin.strict]
-                 [--admin.conf ADMIN.CONF]
-                 N [N ...]
+$ ./x1.py --admin.dump_conf=x1.ini
+$ cat x1.ini
+# sum the integers (default: find the max)
+#accumulate=max
+# an integer for the accumulator
+#integers=
 
-    Process some integers.
 
-    positional arguments:
-      N                     an integer for the accumulator
+$ ./x1.py 1 2 3
+6
+$ ./x1.py 4 5 6
+15
 
-    optional arguments:
-      -h, --help            show this help message and exit
-      --sum                 sum the integers (default: find the max)
-      --admin.print_conf ADMIN.PRINT_CONF
-                            write current config to stdout (json, py, ini, conf)
-      --admin.dump_conf ADMIN.DUMP_CONF
-                            a file system pathname for new config file (types:
-                            json, py, ini, conf)
-      --admin.strict        mismatched options generate exceptions rather than
-                            just warnings
-      --admin.conf ADMIN.CONF
-                            the pathname of the config file (path/filename)
+
+$ cat x1.ini
+# sum the integers (default: find the max)
+#accumulate=max
+# an integer for the accumulator
+integers=1 2 3 4 5 6
+$ ./x1.py
+6
+$ ./x1.py --sum
+21
+
+
+$ export accumulate=sum
+$ ./x1.py 1 2 3
+6
+$ ./x1.py 1 2 3 4 5 6
+21
+
+
+
 
 
 ```
