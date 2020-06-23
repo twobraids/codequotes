@@ -48,11 +48,31 @@ print(args.accumulate(args.integers))
 
 ```
 
-```python
+```bash
 
-    from . import sister_module_1
-    from .sister_module_2 import some_obscure_symbol
-    from .. import aunt_module_3 
-    from ..uncle_package_4 import cousin_module_5
+$ ./x1.py 0 0 --help
+    usage: x1.py [-h] [--sum] [--admin.print_conf ADMIN.PRINT_CONF]
+                 [--admin.dump_conf ADMIN.DUMP_CONF] [--admin.strict]
+                 [--admin.conf ADMIN.CONF]
+                 N [N ...]
+
+    Process some integers.
+
+    positional arguments:
+      N                     an integer for the accumulator
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --sum                 sum the integers (default: find the max)
+      --admin.print_conf ADMIN.PRINT_CONF
+                            write current config to stdout (json, py, ini, conf)
+      --admin.dump_conf ADMIN.DUMP_CONF
+                            a file system pathname for new config file (types:
+                            json, py, ini, conf)
+      --admin.strict        mismatched options generate exceptions rather than
+                            just warnings
+      --admin.conf ADMIN.CONF
+                            the pathname of the config file (path/filename)
+
 
 ```
