@@ -21,25 +21,12 @@ automation:
 
 ```python
 def __init__(self, config, quit_check_callback=None):
-    super(ElasticSearchCrashStorage, self).__init__(
-        config,
-        quit_check_callback
-    )
-    self.transaction = config.transaction_executor_class(
-        config,
-        self,
-        quit_check_callback
-    )
+    super(ElasticSearchCrashStorage, self).__init__(config, quit_check_callback)
+    self.transaction = config.transaction_executor_class(config, self, quit_check_callback)
     if self.config.elasticsearch_urls:
-        self.es = pyelasticsearch.ElasticSearch(
-            self.config.elasticsearch_urls,
-            timeout=self.config.timeout
-        )
-
+        self.es = pyelasticsearch.ElasticSearch(self.config.elasticsearch_urls, timeout=self.config.timeout)
         settings_json = open(self.config.elasticsearch_index_settings).read()
-        self.index_settings = json.loads(
-            settings_json % self.config.elasticsearch_doctype
-        )
+        self.index_settings = json.loads(settings_json % self.config.elasticsearch_doctype)
     else:
         config.logger.warning('elasticsearch crash storage is disabled.')
 ```
