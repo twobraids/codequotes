@@ -20,20 +20,28 @@ automation:
 ```
 
 ```python
+def __init__(self, config, quit_check_callback=None):
+    super(ElasticSearchCrashStorage, self).__init__(
+        config,
+        quit_check_callback
+    )
+    self.transaction = config.transaction_executor_class(
+        config,
+        self,
+        quit_check_callback
+    )
+    if self.config.elasticsearch_urls:
+        self.es = pyelasticsearch.ElasticSearch(
+            self.config.elasticsearch_urls,
+            timeout=self.config.timeout
+        )
 
-from configman import ArgumentParser
-
-parser = ArgumentParser(description='Process some integers.')
-parser.add_argument('integers', metavar='N', type=int, nargs='+',
-                     help='an integer for the accumulator')
-parser.add_argument('--sum', dest='accumulate', action='store_const',
-                    const=sum, default=max,
-                    help='sum the integers (default: find the max)')
-
-args = parser.parse_args()
-print(args.accumulate(args.integers))
-
-```
+        settings_json = open(self.config.elasticsearch_index_settings).read()
+        self.index_settings = json.loads(
+            settings_json % self.config.elasticsearch_doctype
+        )
+    else:
+        config.logger.warning('elasticsearch crash storage is disabled.')```
 
 ```python
 
