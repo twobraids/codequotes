@@ -41,7 +41,8 @@ def __init__(self, config, quit_check_callback=None):
             settings_json % self.config.elasticsearch_doctype
         )
     else:
-        config.logger.warning('elasticsearch crash storage is disabled.')```
+        config.logger.warning('elasticsearch crash storage is disabled.')
+```
 
 ```python
 
