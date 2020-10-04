@@ -20,21 +20,50 @@ automation:
 ```
 
 ```python
-def __init__(self, config, quit_check_callback=None):
-    super(ElasticSearchCrashStorage, self).__init__(config, quit_check_callback)
-    self.transaction = config.transaction_executor_class(config, self, quit_check_callback)
-    if self.config.elasticsearch_urls:
-        self.es = pyelasticsearch.ElasticSearch(self.config.elasticsearch_urls, timeout=self.config.timeout)
-        settings_json = open(self.config.elasticsearch_index_settings).read()
-        self.index_settings = json.loads(settings_json % self.config.elasticsearch_doctype)
-    else:
-        config.logger.warning('elasticsearch crash storage is disabled.')
-```
+class Alpha(object):
+    """This is a silly class that does very very little"""
+    def __init__(self, config):
+        self.config = config
 
-```python
+    def do_something(self, data):
+        if isinstance(data, basestring):
+            return ''.join(x for x in 'you think this is silly?'
+                                if x not in 'aoeui')
+        elif isinstance(data, Number):
+            return 2 * data
+        else:
+            return data
 
-    import numpy.fft
-    from itertools import permutations 
+    def do_something_else(self, data):
+        if data is None:
+            return True
+        else:
+            raise TypeError('only None is acceptable')
+
+
+from numbers import Number
+
+#==============================================================================
+class Alpha(object):
+    """This is a silly class that does very very little"""
+    #--------------------------------------------------------------------------
+    def __init__(self, config):
+        self.config = config
+    #--------------------------------------------------------------------------
+    def do_something(self, data):
+        if isinstance(data, basestring):
+            return ''.join(x for x in 'you think this is silly?'
+                                if x not in 'aoeui')
+        elif isinstance(data, Number):
+            return 2 * data
+        else:
+            return data
+    #--------------------------------------------------------------------------
+    def do_something_else(self, data):
+        if data is None:
+            return True
+        else:
+            raise TypeError('only None is acceptable')
 
 ```
 
