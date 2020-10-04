@@ -20,51 +20,49 @@ automation:
 ```
 
 ```python
-class Alpha(object):
-    """This is a silly class that does very very little"""
-    def __init__(self, config):
-        self.config = config
+class MessageHandlerBase(object):
 
-    def do_something(self, data):
-        if isinstance(data, basestring):
-            return ''.join(x for x in 'you think this is silly?'
-                                if x not in 'aoeui')
-        elif isinstance(data, Number):
-            return 2 * data
-        else:
-            return data
+    def send_message(self, *args, **kwargs):
+        raise NotImplemented
 
-    def do_something_else(self, data):
-        if data is None:
-            return True
-        else:
-            raise TypeError('only None is acceptable')
+    def broadcast_message(self, *args, **kwargs):
+        raise NotImplemented
+
+class A(object):
+    """talk to someone"""
+
+    def send_message(self, message):
+        person = self.find_someone()
+        person.talk_to_me(message_broken)
+
+    def broadcast_message(self, message):
+        self.shout(message)
+            
+
+class B(object):
+    """send message via radio broadcast""" 
+
+    def broadcast_message(self, message):
+        self.radio.broadcast(message)
 
 
-from numbers import Number
+class C(MessageHandlerBase):
+    """send message by waving flags"""
 
-#==============================================================================
-class Alpha(object):
-    """This is a silly class that does very very little"""
-    #--------------------------------------------------------------------------
-    def __init__(self, config):
-        self.config = config
-    #--------------------------------------------------------------------------
-    def do_something(self, data):
-        if isinstance(data, basestring):
-            return ''.join(x for x in 'you think this is silly?'
-                                if x not in 'aoeui')
-        elif isinstance(data, Number):
-            return 2 * data
-        else:
-            return data
-    #--------------------------------------------------------------------------
-    def do_something_else(self, data):
-        if data is None:
-            return True
-        else:
-            raise TypeError('only None is acceptable')
+        def broadcast_message(self, message):
+        self.flags.wave_message(message)
 
+
+def notify_of_emergency(a_message_handler):
+    """Notify a specific person of an emergency condition.  If that is
+    not possible, broadcast the emergency message"""
+    message = "the sky is falling!"
+    try:
+        # try to send the message
+        a_message_handler.send_message(message)
+    except NotImplemented:
+        # fallback to broadcasting the message
+        a_message_handler.broadcast_message(message)            
 ```
 
 ```python
