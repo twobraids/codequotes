@@ -20,65 +20,26 @@ automation:
 ```
 
 ```python
-config = config_manager.get_config()
-print config.arg1, config.arg2, config.arg3
+import argparse
+import socorro.lib.configurationmanager as cm
 
-n.add_option(
-    name='filename',
-    doc='the name of the file',
-    default=None,
-    is_argument=True
+parser = argparse.ArgumentParser(description="Process some integers.")
+parser.add_argument(
+    "integers", metavar="N", type=int, nargs="+", help="an integer for the accumulator"
 )
-n.add_option(
-    name='action',
-    doc='the action to take on the file',
-    default='echo',
-)    
-
-config = config_manager.get_config()
-with open(config.filename) as fp:
-    do_something_interesting(fp)
-
-
-
-
-def echo(x):
-    print x
-
-def backwards(x):
-    print x[::-1]
-
-def upper(x):
-    print x.upper()
-
-n = Namespace()
-n.add_option(
-    'action',
-    default=None,
-    doc='the action to take [echo, backwards, upper]',
-    short_form='a',
-    is_argument=True,
-    from_string_converter=class_converter
+parser.add_argument(
+    "--sum",
+    dest="accumulate",
+    action="store_const",
+    const=sum,
+    default=max,
+    help="sum the integers (default: find the max)",
 )
-n.add_option(
-    'text',
-    default='Socorro Forever',
-    doc='the text input value',
-    short_form='t',
-    is_argument=True,
-)
-c = ConfigurationManager(
-    n,
-    app_name='demo1',
-    app_description=__doc__
-)
-try:
-    config = c.get_config()
-    config.action(config.text)
-except AttributeError, x:
-    print "%s is not a valid command"
-except TypeError:
-    print "you must specify an action"
+
+configman = cm.ConfigurationManager((parser,), (ConfigParse, os.environ, parser))
+config = configman.get_config()
+print config.integers
+print config.accumulate
 ```
 
 ```python
