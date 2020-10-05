@@ -20,55 +20,68 @@ automation:
 ```
 
 ```python
-class MessageHandlerBase(object):
+config = config_manager.get_config()
+print config.arg1, config.arg2, config.arg3
 
-    def send_message(self, *args, **kwargs):
-        raise NotImplemented
+n.add_option(
+    name='filename',
+    doc='the name of the file',
+    default=None,
+    is_argument=True
+)
+n.add_option(
+    name='action',
+    doc='the action to take on the file',
+    default='echo',
+)    
 
-    def broadcast_message(self, *args, **kwargs):
-        raise NotImplemented
-
-class A(object):
-    """talk to someone"""
-
-    def send_message(self, message):
-        person = self.find_someone()
-        person.talk_to_me(message_broken)
-
-    def broadcast_message(self, message):
-        self.shout(message)
-            
-
-class B(object):
-    """send message via radio broadcast""" 
-
-    def broadcast_message(self, message):
-        self.radio.broadcast(message)
+config = config_manager.get_config()
+with open(config.filename) as fp:
+    do_something_interesting(fp)
 
 
-class C(MessageHandlerBase):
-    """send message by waving flags"""
-
-        def broadcast_message(self, message):
-        self.flags.wave_message(message)
 
 
-def notify_of_emergency(a_message_handler):
-    """Notify a specific person of an emergency condition.  If that is
-    not possible, broadcast the emergency message"""
-    message = "the sky is falling!"
-    try:
-        # try to send the message
-        a_message_handler.send_message(message)
-    except NotImplemented:
-        # fallback to broadcasting the message
-        a_message_handler.broadcast_message(message)            
+def echo(x):
+    print x
+
+def backwards(x):
+    print x[::-1]
+
+def upper(x):
+    print x.upper()
+
+n = Namespace()
+n.add_option(
+    'action',
+    default=None,
+    doc='the action to take [echo, backwards, upper]',
+    short_form='a',
+    is_argument=True,
+    from_string_converter=class_converter
+)
+n.add_option(
+    'text',
+    default='Socorro Forever',
+    doc='the text input value',
+    short_form='t',
+    is_argument=True,
+)
+c = ConfigurationManager(
+    n,
+    app_name='demo1',
+    app_description=__doc__
+)
+try:
+    config = c.get_config()
+    config.action(config.text)
+except AttributeError, x:
+    print "%s is not a valid command"
+except TypeError:
+    print "you must specify an action"
 ```
 
 ```python
-    import sister_module_1
-    from sister_module_2 import some_obscure_symbol    
-
 ```
 
 ```bash
