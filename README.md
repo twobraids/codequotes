@@ -20,32 +20,28 @@ automation:
 ```
 
 ```python
-top_level = cm.Namespace()
-top_level.source = cm.Namespace(doc="the input source")
-top.level.source.option(
+import config_manager as cm
+
+n = cm.Namespace()
+n.option(
     "storageClass",
-    doc="the classname for the source",
-    default="socorro.storage.crashstorage.DatabaseCrashStorage",
-    from_string_converer=cm.class_converter,
-)
-top_level.destination = cm.Namespace(doc="the output destination")
-top_level.destination.option(
-    "storageClass",
-    doc="the classname for the destination",
+    doc="a class name for storage",
     default="socorro.storage.crashstorage.HBaseCrashStorage",
     from_string_converter=cm.class_converter,
 )
+conf_man = cm.ConfigurationManager([n], application_name="sample")
+config = conf_man.get_config()
+print config.storageClass
 
 
-print config.source.hostname
-print config.source.port
-print config.destination.hostname
-print config.destination.port
-
-source.storageClass = socorro.storage.crashstorage.HBaseCrashStorage
-source.hostname = hbase1
-destination.storageClass = socorro.storage.crashstorage.HBaseCrashStorage
-destination.hostname = hbase2
+rc = cm.Namespace()
+rc.option(
+    name="hbaseHost",
+    doc="Hostname for HBase/Hadoop cluster. May be a VIP or load balancer",
+    default="localhost",
+)
+rc.option(name="hbasePort", doc="HBase port number", default=9090)
+rc.option(name="hbaseTimeout", doc="timeout in milliseconds for an HBase connection", default=5000)
 ```
 
 ```python
