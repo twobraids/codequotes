@@ -20,69 +20,33 @@ automation:
 ```
 
 ```python
-app_definition = cm.Namespace()
-app_definition.option(
-    "_application",
-    doc="the fully qualified class of the application",
-    default=some_default_class,
+top_level = cm.Namespace()
+top_level.source = cm.Namespace(doc="the input source")
+top.level.source.option(
+    "storageClass",
+    doc="the classname for the source",
+    default="socorro.storage.crashstorage.DatabaseCrashStorage",
+    from_string_converer=cm.class_converter,
+)
+top_level.destination = cm.Namespace(doc="the output destination")
+top_level.destination.option(
+    "storageClass",
+    doc="the classname for the destination",
+    default="socorro.storage.crashstorage.HBaseCrashStorage",
     from_string_converter=cm.class_converter,
 )
 
-config_manager = cm.ConfigurationManager((app_definition,), (ConfigParser, os.environ, getopt))
-config = config_manager.get_config()
 
-application_class = config._application
-app_instance = application_class(config)
-logger.info("starting %s", application_class.app_name)
-app_instance.main()
+print config.source.hostname
+print config.source.port
+print config.destination.hostname
+print config.destination.port
 
-
-import os.path
-import socarro.configman as cm
-import socorro.database as sdb
-import socorro.lib.gzip_csv as gzcsv
-
-
-class DailyCsvApp(object):
-
-    app_name = "daily_csv"
-    app_version = "1.1"
-    app_doc = "This app produces a csv file of the current day's crash data"
-
-    required_config = cm.Namespace()
-    required_config.option(
-        name="day",
-        doc="the date to dump (YYYY-MM-DD)",
-        default=dt.date.today().isoformat(),
-        from_string_converter=cm.date_converter,
-    )
-    required_config.option(
-        name="outputPath", doc="the path of the gzipped csv output file", default="."
-    )
-    required_config.option("product", doc="the name of the product to dump", default="Firefox")
-    required_config.option(name="version", doc="the name of the version to dump", default="4.%")
-    # get database connection option definitions from the database module
-    required_config.update(sdb.get_required_config())
-
-    def __init__(self, config):
-        self.config = config
-
-    def main(self):
-        with config.database.transaction() as db_conn:
-            output_filename = ".".join(
-                self.config.product, self.config.version, self.config.day.isoformat()
-            )
-            csv_pathname = os.path.join(self.config.outputPath, output_filename)
-            db_query = self.construct_query(
-                self.config.day, self.config.product, self.confg.version
-            )
-            with gzcsv(csv_pathname) as csv_fp:
-                for a_row in sdb.query(db_conn, db_query):
-                    csv_fp.write_row(a_row)
-
-    def construct_query(self, day, product, version):
-        # implementation omitted for brevity
-        pass```
+source.storageClass = socorro.storage.crashstorage.HBaseCrashStorage
+source.hostname = hbase1
+destination.storageClass = socorro.storage.crashstorage.HBaseCrashStorage
+destination.hostname = hbase2
+```
 
 ```python
 ```
