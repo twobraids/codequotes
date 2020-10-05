@@ -23,17 +23,18 @@ automation:
 import config_manager as cm
 
 n = cm.Namespace()
+n.option(name="host", doc="the host name", default="localhost")
 n.option(
-    name="datetime",
-    doc="the date and time to process",
-    default="2011-05-04 15:10",
-    from_string_converter=cm.datetime_converter,
+    name="debug",
+    doc="use debug mode",
+    default=False,
+    short_form="D",
+    from_string_converter=cm.boolean_converter,
 )
 conf_man = cm.ConfigurationManager([n], application_name="sample")
-
-
 config = conf_man.get_config()
-print config.datetime
+print config.host
+print config.debug
 ```
 
 ```python
