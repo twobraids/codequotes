@@ -24,24 +24,16 @@ import config_manager as cm
 
 n = cm.Namespace()
 n.option(
-    "storageClass",
-    doc="a class name for storage",
-    default="socorro.storage.crashstorage.HBaseCrashStorage",
-    from_string_converter=cm.class_converter,
+    name="datetime",
+    doc="the date and time to process",
+    default="2011-05-04 15:10",
+    from_string_converter=cm.datetime_converter,
 )
 conf_man = cm.ConfigurationManager([n], application_name="sample")
+
+
 config = conf_man.get_config()
-print config.storageClass
-
-
-rc = cm.Namespace()
-rc.option(
-    name="hbaseHost",
-    doc="Hostname for HBase/Hadoop cluster. May be a VIP or load balancer",
-    default="localhost",
-)
-rc.option(name="hbasePort", doc="HBase port number", default=9090)
-rc.option(name="hbaseTimeout", doc="timeout in milliseconds for an HBase connection", default=5000)
+print config.datetime
 ```
 
 ```python
