@@ -20,21 +20,46 @@ automation:
 ```
 
 ```python
-import config_manager as cm
+class RuleTrigger:
+    __match_args__ = ('name',)
 
-n = cm.Namespace()
-n.option(name="host", doc="the host name", default="localhost")
-n.option(
-    name="debug",
-    doc="use debug mode",
-    default=False,
-    short_form="D",
-    from_string_converter=cm.boolean_converter,
-)
-conf_man = cm.ConfigurationManager([n], application_name="sample")
-config = conf_man.get_config()
-print config.host
-print config.debug
+    def __init__(self, config, name):
+        self.config = config
+        self.name = name
+        self.rules_that_use_this_thing = []
+        self.canceled = False
+
+
+class OzoneRule(Rule):
+
+    def register_triggers(self):
+        self.heartbeat = HeartBeat(self.config, 'the_heart', "20s")
+        self.ozone_on_timer = DelayTimer(self.config, "ozone_on_timer", "5s")
+        self.total_cycle_timer = DelayTimer(self.config, "total_cycle_timer", "2m")
+        self.total_cycle_timer.add_time()
+        self.end_of_cycle_timer = DelayTimer(self.config, "end_of_cycle_timer", "10s")
+        return (self.heartbeat, self.ozone_on_timer, self.total_cycle_timer, self.end_of_cycle_timer)
+
+    def action(self, the_trigger, the_event, new_value):
+        logging.info('OzoneRule action %s %s %s', the_trigger.name, the_event, new_value)
+
+        match(the_trigger):
+            case HeartBeat('the_heart') if self.total_cycle_timer.is_running:
+                print(f'{datetime.now()} heartbeat - ozone on')
+                self.ozone_switch.on = True
+                self.ozone_on_timer.add_time()
+            case DelayTimer('ozone_on_timer'):
+                print(f'{datetime.now()} ozone_timer - ozone off')
+                self.ozone_switch.on = False
+            case DelayTimer('total_cycle_timer'):
+                self.ozone_on_timer.cancel()
+                print(f'{datetime.now()} total_cycle_timer - ozone off')
+                self.ozone_switch.on = False
+                self.end_of_cycle_timer.add_time()
+            case DelayTimer('end_of_cycle_timer'):
+                print(f'{datetime.now()} end_of_cycle_timer - shutdown')
+                exit(-1)
+
 ```
 
 ```python
