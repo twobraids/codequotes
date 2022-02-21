@@ -20,8 +20,34 @@ automation:
 ```
 
 ```python
-with np.printoptions(precision=3):
-    print(my_array)
+class Vector(tuple):
+    def __new__(cls, *args):
+        match (args):
+            case [cls() as an_instance_of_cls]:
+                # match instances of the calling cls or its derivatives
+                # this is the identity case
+                return an_instance_of_cls
+
+            case [Vector() as an_instance_of_vector]:
+                # match any instance of the Vector family not directly in line with cls
+                # explicitly invoke a conversion - maybe cartesian to polar or vice versa
+                return cls.as_my_type(an_instance_of_vector)
+
+            case [Iterable() as an_iterable]:
+                # match any old iterable like a generator or numpy array
+                # create a new instance of this cls
+                return super().__new__(
+                    cls,
+                    tuple(cls._judge_candidate_value(n) for n in an_iterable),
+                )
+
+            case args_:
+                # discrete values were passed, assume they are to be the coordinate
+                # values of a new instance of this cls
+                return super().__new__(
+                    cls, tuple(cls._judge_candidate_value(n) for n in args_)
+                )
+
 ```
 
 ```python
