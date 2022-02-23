@@ -20,63 +20,34 @@ automation:
 ```
 
 ```python
-    def _operation(self, the_other, a_dyadic_fn):
-        # return a new instance with members that result from a_dyadic_fn applied to
-        # this instance zipped with the_other
-        match (the_other):
-            case Number() as a_number:
-                # match scalars
-                return self.__class__(
-                    *starmap(
-                        a_dyadic_fn, zip_longest(self, (a_number,), fillvalue=a_number)
-                    )
-                )
+    @classmethod
+    def as_my_type(cls, the_other):
+        # This function is in charge of converting things into polar coordinates.
+        # The base class Vector has no sense of what its members mean, so members of the
+        # polar branch of the Vector family interpret base Vector instances and other
+        # Iterables as having polar values already.
+        match the_other:
+            case PolarPoint():
+                # identity case
+                return the_other
 
-            case Vector() as a_vector:
-                # match any instance of the Vector family
-                the_other_as_my_type = self.as_my_type(a_vector)
-                return self.__class__(
-                    *starmap(a_dyadic_fn, zip(self, the_other_as_my_type))
-                )
+            case Point() as a_cartesian_point:
+                # we know this is the cartesian case, so we must explicitly convert it
+                return cls.as_polar(a_cartesian_point)
 
-            case Iterable() as an_iterable:
-                # match any other type of iterable
-                return self.__class__(*starmap(a_dyadic_fn, zip(self, an_iterable)))
+            case Iterable() as an_iterator:
+                # we don't know what this sequence represents.
+                # To be consistent with the constructor, assume they are
+                # series of components of a polar point
+                return cls(*an_iterator)
+
+            case Number() as ρ:
+                # a rare case where a PolarPoint is specified with ρ alone and
+                # θ, φ are assumed to be zero.
+                return cls(ρ)
 
             case _:
-                # no idea how to apply this value in a dyadic manner with this Vector instance
-                raise TypeError(f"{the_other} disallowed")
-
-    def __add__(self, the_other):
-        return self._operation(the_other, add)
-
-    def __sub__(self, the_other):
-        return self._operation(the_other, sub)
-
-    def __mul__(self, the_other):
-        return self._operation(the_other, mul)
-
-    def __floordiv__(self, the_other):
-        return self._operation(the_other, floordiv)
-
-    def __truediv__(self, the_other):
-        return self._operation(the_other, truediv)
-
-    def __pow__(self, the_other):
-        return self._operation(the_other, pow)
-
-    def __neg__(self):
-        return self.__class__(*(-c for c in self))
-
-    def trunc(self):
-        return self.__class__(*(int(c) for c in self))
-
-    def round(self):
-        return self.__class__(*(round(c) for c in self))
-
-    def dot(self, the_other):
-        return sum(a * b for a, b in zip(self, the_other))
-
+                raise TypeError(f"Don't know how to convert {the_other} to Polar")
 ```
 
 ```python
