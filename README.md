@@ -20,34 +20,47 @@ automation:
 ```
 
 ```python
-    @classmethod
-    def as_my_type(cls, the_other):
-        # This function is in charge of converting things into polar coordinates.
-        # The base class Vector has no sense of what its members mean, so members of the
-        # polar branch of the Vector family interpret base Vector instances and other
-        # Iterables as having polar values already.
-        match the_other:
-            case PolarPoint():
-                # identity case
-                return the_other
+def draw_a_looping_spiral(a_canvas):
+    # the middle of the image
+    origin_cartesian_point = Point(a_canvas.the_image.size) / 2
 
-            case Point() as a_cartesian_point:
-                # we know this is the cartesian case, so we must explicitly convert it
-                return cls.as_polar(a_cartesian_point)
+    # beginning and end polar points for two loops around a circle
+    # while the radius of the loops shrink
+    outer_rotator_polar_origin = PolarPoint(origin_cartesian_point * (3.0 / 4.0, 0))
+    outer_rotator_polar_destination = PolarPoint(0, 4.0 * π)
+    outer_rotator_iter = iter_linearly_between(
+        outer_rotator_polar_origin, outer_rotator_polar_destination, 2000
+    )
 
-            case Iterable() as an_iterator:
-                # we don't know what this sequence represents.
-                # To be consistent with the constructor, assume they are
-                # series of components of a polar point
-                return cls(*an_iterator)
+    # beginning and end polar points for fifty loops around a circle
+    # with the loop diameter shrinking with each step
+    inner_rotator_polar_origin = PolarPoint(origin_cartesian_point * (1.0 / 8.0, 0))
+    inner_rotator_polar_destination = PolarPoint(1, 100.0 * π)
+    inner_rotator_iter = iter_linearly_between(
+        inner_rotator_polar_origin, inner_rotator_polar_destination, 2000
+    )
 
-            case Number() as ρ:
-                # a rare case where a PolarPoint is specified with ρ alone and
-                # θ, φ are assumed to be zero.
-                return cls(ρ)
-
-            case _:
-                raise TypeError(f"Don't know how to convert {the_other} to Polar")
+    # create a couple iterators that will produce a sequence of polar points
+    # that spin in lockstep with each other
+    for step_counter, (
+        outer_rotated_polar_point,
+        inner_rotated_polar_point,
+    ) in enumerate(
+        no_consectutive_repeats_iter(
+            zip(
+                outer_rotator_iter,
+                inner_rotator_iter,
+            )
+        )
+    ):
+        # add the cartesian origin point with values from the spinning polar points
+        current_point = (
+            origin_cartesian_point
+            + outer_rotated_polar_point
+            + inner_rotated_polar_point
+        )
+        # draw the line segment from prevous and current cartesian points
+        a_canvas.draw_successive_line_segment(current_point, step_counter)
 ```
 
 ```python
