@@ -20,24 +20,49 @@ automation:
 ```
 
 ```python
-square = Path(
-    CartesianPoint(0, 0),
-    CartesianPoint(0, 10),
-    CartesianPoint(10, 10),
-    CartesianPoint(10, 0),
-)
+class Path(Vector):
+    @classmethod
+    def _judge_candidate_value(cls, a_potential_point):
+        # accept only scalars as values
+        if isinstance(a_potential_point, Vector):
+            return a_potential_point
+        raise TypeError(
+            f'{cls} members must be a Vector instance, "{a_potential_point}" is not'
+        )
 
-# translate square by 50 in both x and y directions
-translated_square_50 = square + 50
+    def _operation(self, the_other, a_dyadic_fn):
+        # return a new instance with members that result from a_dyadic_fn applied to
+        # this instance zipped with the_other
+        match the_other:
+            case Number() as a_number:
+                # match scalars
+                return self.__class__(
+                    *starmap(
+                        a_dyadic_fn, zip_longest(self, (a_number,), fillvalue=a_number)
+                    )
+                )
 
-# translate square by 1 in the x direction and 10 in y direction
-translated_square_1_10 = square + CartesianPoint(1, 10)
+            case self.__class__() as a_path_object:
+                return self.__class__(*starmap(a_dyadic_fn, zip(self, a_path_object)))
 
-# scale the square by 2 and 3 in the x and y directions respectively
-scaled_square_2_3 = square * CartesianPoint(2, 3)
+            case CartesianPoint() | PolarPoint():
+                # match any instance of the two point families
+                return self.__class__(
+                    *starmap(
+                        a_dyadic_fn,
+                        zip_longest(self, (the_other,), fillvalue=the_other),
+                    )
+                )
 
-# scale each point of the square by each point of a translated square
-scaled_square = square * translated_square_50```
+            case Iterable() as an_iterable:
+                # match any other type of iterable
+                return self.__class__(*starmap(a_dyadic_fn, zip(self, an_iterable)))
+
+            case _:
+                # no idea how to apply this value in a dyadic manner with this Vector instance
+                raise TypeError(f"{the_other} disallowed")
+
+```
 
 ```python
 ```
