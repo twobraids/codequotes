@@ -20,14 +20,24 @@ automation:
 ```
 
 ```python
-    def __add__(self, the_other):
-        return PolarPoint(self.as_cartesian() + the_other)
+square = Path(
+    CartesianPoint(0, 0),
+    CartesianPoint(0, 10),
+    CartesianPoint(10, 10),
+    CartesianPoint(10, 0),
+)
 
-    def __sub__(self, the_other):
-        return PolarPoint(self.as_cartesian() - the_other)
-    
-    # the rest of the arithmetic operations ommitted for brevity
-```
+# translate square by 50 in both x and y directions
+translated_square_50 = square + 50
+
+# translate square by 1 in the x direction and 10 in y direction
+translated_square_1_10 = square + CartesianPoint(1, 10)
+
+# scale the square by 2 and 3 in the x and y directions respectively
+scaled_square_2_3 = square * CartesianPoint(2, 3)
+
+# scale each point of the square by each point of a translated square
+scaled_square = square * translated_square_50```
 
 ```python
 ```
