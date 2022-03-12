@@ -19,48 +19,40 @@ automation:
 
 ```
 
-```python
-class Path(Vector):
-    @classmethod
-    def _judge_candidate_value(cls, a_potential_point):
-        # accept only scalars as values
-        if isinstance(a_potential_point, Vector):
-            return a_potential_point
-        raise TypeError(
-            f'{cls} members must be a Vector instance, "{a_potential_point}" is not'
+```pythondef draw_path_demo(a_canvas):
+    """Draw 9 looping rays from the center of the canvas"""
+
+    canvas_middle_point = CartesianPoint(a_canvas.the_image.size) / 2
+
+    collection_of_ray_paths = []
+
+    for θ in iter_linear_steps_between(0, 2 * π, 9):
+
+        # materialize a path of PolarPoints making a straight ray from the origin
+        ray_path = Path(
+            iter_linear_steps_between(PolarPoint(0, θ), PolarPoint(300, θ), 100)
         )
 
-    def _operation(self, the_other, a_dyadic_fn):
-        # return a new instance with members that result from a_dyadic_fn applied to
-        # this instance zipped with the_other
-        match the_other:
-            case Number() as a_number:
-                # match scalars
-                return self.__class__(
-                    *starmap(
-                        a_dyadic_fn, zip_longest(self, (a_number,), fillvalue=a_number)
-                    )
-                )
+        # materialize a spiral path of PolarPoints about the origin
+        spiral_path = Path(
+            iter_natural_steps_between(PolarPoint(0, 0), PolarPoint(50, 10 * π), 100)
+        )
 
-            case self.__class__() as a_path_object:
-                return self.__class__(*starmap(a_dyadic_fn, zip(self, a_path_object)))
+        # combine the straight rays with the spiral path and translate them
+        # from the canvas origin to the canvas middle - save the result as
+        # a path of PolarPoints
+        collection_of_ray_paths.append(ray_path + spiral_path + canvas_middle_point)
 
-            case CartesianPoint() | PolarPoint():
-                # match any instance of the two point families
-                return self.__class__(
-                    *starmap(
-                        a_dyadic_fn,
-                        zip_longest(self, (the_other,), fillvalue=the_other),
-                    )
-                )
+    # set up windowing iterators for all the spiraling ray paths
+    windowed_iter_for_every_ray_path = (
+        windowed(a_ray_path, 2) for a_ray_path in collection_of_ray_paths
+    )
 
-            case Iterable() as an_iterable:
-                # match any other type of iterable
-                return self.__class__(*starmap(a_dyadic_fn, zip(self, an_iterable)))
+    # step through the all the spiral ray paths in parallel, round robin style
+    for a_segment_for_every_ray in zip(*windowed_iter_for_every_ray_path):
+        for start_point, end_point in a_segment_for_every_ray:
+            a_canvas.draw_line_segment(start_point, end_point)
 
-            case _:
-                # no idea how to apply this value in a dyadic manner with this Vector instance
-                raise TypeError(f"{the_other} disallowed")
 
 ```
 
