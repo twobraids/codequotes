@@ -19,7 +19,8 @@ automation:
 
 ```
 
-```pythondef draw_path_demo(a_canvas):
+```python
+def draw_path_demo(a_canvas):
     """Draw 9 looping rays from the center of the canvas"""
 
     canvas_middle_point = CartesianPoint(a_canvas.the_image.size) / 2
