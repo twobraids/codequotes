@@ -29,6 +29,7 @@ from points import Point, Block
 from configmanners import Namespace, configuration
 from configmanners.converters import str_to_list
 
+terrible_number = 100000
 
 def distance(p1, p2):
     return sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2)
@@ -36,6 +37,10 @@ def distance(p1, p2):
 
 str_to_Point = partial(
     str_to_list, item_converter=float, list_to_collection_converter=Point
+)
+
+str_to_Block = partial(
+    str_to_list, item_converter=int, list_to_collection_converter=Block
 )
 
 
@@ -47,21 +52,40 @@ def all_points_within_block_iter(a_block):
 
 required_config = Namespace()
 required_config.add_option(
-    "A", default=Point(58.34, 844.29), 
-    doc="point A", 
-    from_string_converter=str_to_Point
+    "A_in_px",
+    default=Point(58.34, 844.29),
+    doc="point A in pixel coordinates",
+    from_string_converter=str_to_Point,
 )
 
 required_config.add_option(
-    "B",
+    "B_in_px",
     default=Point(846.05, 290.27),
-    doc="point B",
+    doc="point B in pixel coordinates",
     from_string_converter=str_to_Point,
 )
 required_config.add_option(
-    "C",
+    "C_in_px",
     default=Point(1574.73, 453.96),
-    doc="point C",
+    doc="point C in pixel coordinates",
+    from_string_converter=str_to_Point,
+)
+required_config.add_option(
+    "AB_time_delta",
+    default=4.0,
+    doc="time delta between listening posts A and B",
+    from_string_converter=str_to_Point,
+)
+required_config.add_option(
+    "AC_time_delta",
+    default=6.0,
+    doc="time delta between listening posts A and C",
+    from_string_converter=str_to_Point,
+)
+required_config.add_option(
+    "BC_time_delta",
+    default=2.0,
+    doc="time delta between listening posts B and C",
     from_string_converter=str_to_Point,
 )
 required_config.add_option(
@@ -74,54 +98,64 @@ required_config.add_option(
     default=332.24,
     doc="the speed of sound in meters per second",
 )
+required_config.add_option(
+    "search_box_in_px",
+    default="400, 1000, 1200, 2000",
+    doc="coodinate extents in pixels of the search area",
+    from_string_converter=str_to_Block,
+)
 
 
 config = configuration(required_config)
 
-A_in_px = config.A
-B_in_px = config.B
-C_in_px = config.C
-scale = config.AB_in_m / distance(A_in_px, B_in_px)
-search_box_in_px = Block(400, 1000, 1200, 2000)
+scale = config.AB_in_m / distance(config.A_in_px, config.B_in_px)
 
 
 def test_fitness(test_point_in_px):
-    SA_in_m = distance(A_in_px, test_point_in_px) * scale
-    SB_in_m = distance(B_in_px, test_point_in_px) * scale
-    SC_in_m = distance(C_in_px, test_point_in_px) * scale
+    SA_in_m = distance(config.A_in_px, test_point_in_px) * scale
+    SB_in_m = distance(config.B_in_px, test_point_in_px) * scale
+    SC_in_m = distance(config.C_in_px, test_point_in_px) * scale
 
     TA_in_s = SA_in_m / config.speed_of_sound_in_mps
     TB_in_s = SB_in_m / config.speed_of_sound_in_mps
     TC_in_s = SC_in_m / config.speed_of_sound_in_mps
 
-    diff_AB = abs(TB_in_s - TA_in_s)
-    if not isclose(diff_AB, 4.02, abs_tol=0.1):
-        return 10000
+    test_AB_delta = abs(TB_in_s - TA_in_s)
+    if not isclose(test_AB_delta, config.AB_time_delta, abs_tol=0.1):
+        return terrible_number
 
-    diff_AC = abs(TA_in_s - TC_in_s)
-    if not isclose(diff_AC, 5.72, abs_tol=0.1):
-        return 10000
+    test_AC_delta = abs(TA_in_s - TC_in_s)
+    if not isclose(test_AC_delta, config.AC_time_delta, abs_tol=0.1):
+        return terrible_number
 
-    diff_BC = abs(TB_in_s - TC_in_s)
-    if not isclose(diff_BC, 1.7, abs_tol=0.1):
-        return 10000
+    test_BC_delta = abs(TB_in_s - TC_in_s)
+    if not isclose(test_BC_delta, config.BC_time_delta, abs_tol=0.1):
+        return terrible_number
 
     # return the deviation from the sum of the deltas as a fittness value
-    return abs(diff_AB + diff_AC + diff_BC - 4.02 - 5.72 - 1.7)
+    return abs(
+        test_AB_delta
+        + test_AC_delta
+        + test_BC_delta
+        - config.AB_time_delta
+        - config.AC_time_delta
+        - config.BC_time_delta
+    )
 
 
-best_fitness = 1000000
+best_fitness = terrible_number
 best_point = None
-for test_point_in_px in all_points_within_block_iter(search_box_in_px):
+for test_point_in_px in all_points_within_block_iter(config.search_box_in_px):
     fitness = test_fitness(test_point_in_px)
     if fitness < best_fitness:
         best_fitness = fitness
         best_point = test_point_in_px
 
 
-print(f'{best_point=} at {best_fitness=}')
-
-
+if best_point is not None:
+    print(f'{best_point=} at {best_fitness=}')
+else:
+    print('the air cannon is not in the search area')
 ```
 
 ```python
